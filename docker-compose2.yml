@@ -1,0 +1,43 @@
+version: '3'
+services:
+  service-discovery-container:
+    image: service-discovery-image:latest
+    ports:
+      - "8761:8761"
+    environment:
+      - spring.cloud.config.uri=http://host.docker.internal:8888
+  bank-service-container-1:
+    image: bank-service-image:latest
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/BankDB
+      - spring.cloud.config.uri=http://host.docker.internal:8888
+      - eureka.client.serviceUrl.defaultZone=http://host.docker.internal:8761/eureka
+  bank-service-container-2:
+    image: bank-service-image:latest
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/BankDB
+      - spring.cloud.config.uri=http://host.docker.internal:8888
+      - eureka.client.serviceUrl.defaultZone=http://host.docker.internal:8761/eureka
+  client-service-container:
+    image: client-service-image:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/BankDB
+      - spring.cloud.config.uri=http://host.docker.internal:8888
+      - eureka.client.serviceUrl.defaultZone=http://host.docker.internal:8761/eureka
+      - server.ip=host.docker.internal
+  api-gateway-container:
+    image: api-gateway-image:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/BankDB
+      - spring.cloud.config.uri=http://host.docker.internal:8888
+      - eureka.client.serviceUrl.defaultZone=http://host.docker.internal:8761/eureka
+
+
